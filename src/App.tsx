@@ -3,6 +3,7 @@ import Signature from './components/Signature'
 import Projects from './components/Projects'
 import BeyondBrowser from './components/BeyondBrowser'
 import Playground from './components/Playground'
+import CommandMenu from './components/CommandMenu'
 
 export function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return (
@@ -221,6 +222,7 @@ export default function App() {
             </a>
           </nav>
           <div className="header-actions">
+            <CommandMenu />
             <button
               className="motion-toggle"
               onClick={toggleMotion}

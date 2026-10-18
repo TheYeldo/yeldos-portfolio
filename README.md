@@ -29,6 +29,8 @@ pnpm preview
 - A beveled 3D Y with titanium and obsidian materials, studio reflections, pointer response and a CSS fallback.
 - Scroll-linked storytelling and section reveals with a global motion control and system reduced-motion support.
 - Three detailed project cases with live screenshots, category filters, native dialogs and repository links.
+- A sticky case index, direct project links and switchable room/editor screenshots for Programming Simulator.
+- A searchable portfolio index with Ctrl/⌘ K, keyboard navigation and support for projects hidden by filters.
 - About, YelGit and ProcessLens, interactive expertise tabs and a four-step working process.
 - A playground with editable easing and duration, a keyboard-accessible tilt card and a magnetic button.
 - A Telegram contact composer that opens a draft for the selected topic, plus email copy and GitHub links.
@@ -43,6 +45,7 @@ pnpm preview
 - `src/components/Projects.tsx` and `projects.css`: case content, filters, screenshots and dialogs.
 - `src/components/BeyondBrowser.tsx` and `beyond-browser.css`: C++ projects.
 - `src/components/Playground.tsx` and `playground.css`: interactive motion experiments.
+- `src/components/CommandMenu.tsx` and `command-menu.css`: searchable navigation with native dialog semantics.
 - `public/projects/`: real screenshots from the owner's projects.
 - `index.html`: search/social metadata and structured data.
 

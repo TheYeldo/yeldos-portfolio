@@ -164,6 +164,9 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
 }
 
 function ProjectFrame({ project, compact = false }: { project: Project; compact?: boolean }) {
+  const [view, setView] = useState<'editor' | 'room'>('editor')
+  const isSimulator = project.id === 'programming-simulator'
+  const image = isSimulator && view === 'room' ? 'programming-room' : project.id
   return (
     <div
       className={`project-stage project-stage-${project.id}${compact ? ' project-stage-compact' : ''}`}
@@ -173,6 +176,16 @@ function ProjectFrame({ project, compact = false }: { project: Project; compact?
         <div className="project-stage-topline" aria-hidden="true">
           <span>YELDOS — SELECTED WORK</span>
           <span>{project.number} / 03</span>
+        </div>
+      )}
+      {isSimulator && (
+        <div className="project-view-switch" role="group" aria-label="Ракурс Programming Simulator">
+          <button type="button" aria-pressed={view === 'room'} onClick={() => setView('room')}>
+            <span aria-hidden="true">◇</span> 3D-комната
+          </button>
+          <button type="button" aria-pressed={view === 'editor'} onClick={() => setView('editor')}>
+            <span aria-hidden="true">&lt;/&gt;</span> Редактор кода
+          </button>
         </div>
       )}
       <div className="project-browser-frame">
@@ -191,9 +204,14 @@ function ProjectFrame({ project, compact = false }: { project: Project; compact?
           <span className="project-browser-corner">↗</span>
         </div>
         <img
+          key={image}
           className="project-screenshot"
-          src={`/projects/${project.id}.jpg`}
-          alt={project.imageAlt}
+          src={`/projects/${image}.jpg`}
+          alt={
+            isSimulator && view === 'room'
+              ? 'Programming Simulator: ночная 3D-комната с рабочим столом и монитором'
+              : project.imageAlt
+          }
           width="1280"
           height="720"
           loading="lazy"
@@ -219,10 +237,50 @@ function ProjectFrame({ project, compact = false }: { project: Project; compact?
 
 export default function Projects() {
   const [filter, setFilter] = useState<(typeof filters)[number]['id']>('all')
+  const [activeProject, setActiveProject] = useState<Project['id']>('yeldo-os')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const visibleProjects = projects.filter((project) => filter === 'all' || project.group === filter)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting)
+            setActiveProject(entry.target.id.replace('project-', '') as Project['id'])
+        }
+      },
+      { rootMargin: '-25% 0px -60% 0px' },
+    )
+    document.querySelectorAll('.project-chapter').forEach((chapter) => observer.observe(chapter))
+    return () => observer.disconnect()
+  }, [filter])
+
+  useEffect(() => {
+    let frame = 0
+    const revealProject = (id: string) => {
+      if (!projects.some((project) => id === `project-${project.id}`)) return
+      if (!document.getElementById(id)) setFilter('all')
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() =>
+        document.getElementById(id)?.scrollIntoView({ block: 'start' }),
+      )
+    }
+    const onHashChange = () => revealProject(window.location.hash.slice(1))
+    const onNavigate = (event: Event) => {
+      const id = (event as CustomEvent<{ id?: string }>).detail?.id
+      if (id) revealProject(id)
+    }
+    window.addEventListener('hashchange', onHashChange)
+    window.addEventListener('portfolio:navigate', onNavigate)
+    onHashChange()
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('hashchange', onHashChange)
+      window.removeEventListener('portfolio:navigate', onNavigate)
+    }
+  }, [])
 
   useEffect(() => {
     if (!selectedProject || !dialogRef.current) return
@@ -307,8 +365,28 @@ export default function Projects() {
           Показано проектов: {visibleProjects.length}
         </p>
         <div className="projects-chapters">
+          <nav className="project-index" aria-label="Быстрый переход к проекту">
+            {visibleProjects.map((project) => (
+              <a
+                key={project.id}
+                href={`#project-${project.id}`}
+                aria-current={activeProject === project.id ? 'location' : undefined}
+              >
+                <span>{project.number}</span>
+                <span className="project-index-full">{project.title}</span>
+                <span className="project-index-short">
+                  {project.id === 'programming-simulator' ? 'Simulator' : project.title}
+                </span>
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M10 4v12m-5-5 5 5 5-5" stroke="currentColor" strokeWidth="1.4" />
+                </svg>
+              </a>
+            ))}
+          </nav>
           {visibleProjects.map((project) => (
             <article
+              id={`project-${project.id}`}
+              tabIndex={-1}
               className={`project-card project-chapter project-card-${project.id}`}
               key={project.id}
               aria-labelledby={`project-title-${project.id}`}
@@ -369,6 +447,7 @@ export default function Projects() {
           </div>
           <div className="project-experiments-list">
             <a
+              id="project-uniroute"
               href="https://github.com/TheYeldo/uniroute-korea"
               target="_blank"
               rel="noopener noreferrer"
@@ -381,6 +460,7 @@ export default function Projects() {
               <Arrow diagonal />
             </a>
             <a
+              id="project-museum"
               href="https://github.com/TheYeldo/museum-of-the-lost-internet"
               target="_blank"
               rel="noopener noreferrer"
@@ -393,6 +473,7 @@ export default function Projects() {
               <Arrow diagonal />
             </a>
             <a
+              id="project-assistant"
               href="https://github.com/TheYeldo/yeldos-assistant-bot"
               target="_blank"
               rel="noopener noreferrer"
@@ -439,7 +520,7 @@ export default function Projects() {
               <h2 id="project-dialog-title">{selectedProject.title}</h2>
               <p className="project-dialog-lead">{selectedProject.headline}</p>
             </div>
-            <ProjectFrame project={selectedProject} compact />
+            <ProjectFrame key={selectedProject.id} project={selectedProject} compact />
             <div className="project-dialog-body">
               <div className="project-facts">
                 {selectedProject.facts.map((fact) => (

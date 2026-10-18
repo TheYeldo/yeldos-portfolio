@@ -1134,3 +1134,170 @@
   transform: none !important;
   transition: none !important;
 }
+
+/* The project index stays within the case gallery while reading. */
+.project-index {
+  position: sticky;
+  top: 82px;
+  z-index: 10;
+  display: flex;
+  align-self: start;
+  gap: 8px;
+  padding: 12px 0;
+  margin-bottom: -20px;
+  background: #101210eb;
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid #ffffff12;
+}
+.project-index a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+  padding: 14px 18px;
+  border: 1px solid #ffffff15;
+  border-radius: 8px;
+  color: #aab2a3;
+  font-size: 12px;
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s;
+}
+.project-index a > span:first-child {
+  font:
+    10px ui-monospace,
+    monospace;
+  opacity: 0.6;
+}
+.project-index a[aria-current='location'] {
+  background: #d7f96b;
+  color: #202b11;
+  border-color: #d7f96b;
+}
+.project-index a:hover {
+  border-color: #d7f96b88;
+}
+.project-index svg {
+  width: 17px;
+  height: 17px;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+.project-index .project-index-short {
+  display: none;
+}
+.project-chapter {
+  scroll-margin-top: 64px;
+}
+.project-chapter:focus {
+  outline: none;
+}
+.project-view-switch {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 20px;
+  padding: 4px;
+  border-radius: 100px;
+  background: #243c4820;
+  border: 1px solid #243c4812;
+  gap: 4px;
+}
+.project-view-switch button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 100px;
+  color: #3c515a;
+  background: transparent;
+  font-size: 12px;
+  transition:
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.project-view-switch button > span {
+  font:
+    12px ui-monospace,
+    monospace;
+}
+.project-view-switch button[aria-pressed='true'] {
+  background: #f4f7f4;
+  color: #263c46;
+  box-shadow: 0 2px 7px #182e3420;
+}
+.projects-section .project-view-switch button:focus-visible {
+  outline-color: #263c46;
+}
+.project-stage-programming-simulator .project-screenshot {
+  animation: project-view-enter 0.3s ease both;
+}
+@keyframes project-view-enter {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 900px) {
+  .project-index {
+    top: 75px;
+  }
+  .project-index a {
+    padding: 13px 12px;
+    gap: 9px;
+    font-size: 11px;
+  }
+  .project-index svg {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .project-index {
+    top: 69px;
+    gap: 5px;
+    margin-bottom: -10px;
+    padding: 9px 0;
+  }
+  .project-index a {
+    padding: 12px 8px;
+    gap: 6px;
+    font-size: 10px;
+    border-radius: 6px;
+  }
+  .project-index a > span:first-child {
+    font-size: 9px;
+  }
+  .project-index .project-index-full {
+    display: none;
+  }
+  .project-index .project-index-short {
+    display: inline;
+  }
+  .project-view-switch {
+    margin-bottom: 16px;
+    gap: 2px;
+    width: 100%;
+  }
+  .project-view-switch button {
+    padding: 9px 8px;
+    justify-content: center;
+    flex: 1;
+    gap: 6px;
+    font-size: 10px;
+  }
+  .project-view-switch button > span {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion='active']) .project-stage-programming-simulator .project-screenshot {
+    animation: none;
+  }
+}
+html[data-motion='paused'] .project-stage-programming-simulator .project-screenshot {
+  animation: none;
+}
