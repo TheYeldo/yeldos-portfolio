@@ -1,0 +1,114 @@
+.signature {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  contain: layout style;
+}
+
+.signature__canvas {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.signature--ready .signature__canvas {
+  opacity: 1;
+}
+
+.signature__fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  container-type: size;
+  opacity: 1;
+  transition: opacity 900ms ease;
+  pointer-events: none;
+}
+
+.signature--ready .signature__fallback {
+  opacity: 0;
+}
+
+.signature__fallback-face,
+.signature__fallback-depth {
+  position: absolute;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: min(78cqw, 83cqh);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.075em;
+  transform: perspective(900px) rotateX(-8deg) rotateY(-18deg) rotateZ(6deg);
+}
+
+.signature__fallback-face {
+  color: transparent;
+  background: linear-gradient(
+    128deg,
+    #e8e8e4 0%,
+    #82898b 15%,
+    #e3e5df 19%,
+    #363e42 25%,
+    #4a5457 40%,
+    #1c2426 49%,
+    #8a9597 72%,
+    #c3c8c3 76%,
+    #384143 90%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke: 1px rgb(240 241 237 / 65%);
+}
+
+.signature__fallback-depth {
+  color: #252d2e;
+  text-shadow:
+    1px 1px #aeb7b5,
+    2px 2px #737d7c,
+    3px 3px #596362,
+    4px 4px #4e5858,
+    5px 5px #455050,
+    6px 6px #3e4948,
+    7px 7px #384240,
+    8px 8px #333b3a,
+    9px 9px #2d3433,
+    10px 10px #252d2b,
+    11px 11px #1b2420;
+}
+
+.signature__fallback-shadow {
+  position: absolute;
+  bottom: 10%;
+  left: 27%;
+  width: 53%;
+  height: 5%;
+  transform: rotate(-13deg);
+  border-radius: 50%;
+  background: rgb(56 61 48 / 20%);
+  filter: blur(18px);
+}
+
+.signature--obsidian .signature__fallback-face {
+  background-image: linear-gradient(
+    128deg,
+    #848c89,
+    #283131 20%,
+    #111918 45%,
+    #3f4b45 70%,
+    #18211e
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signature:not([data-motion='active']) .signature__canvas,
+  .signature:not([data-motion='active']) .signature__fallback {
+    transition: none;
+  }
+}

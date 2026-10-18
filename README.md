@@ -1,6 +1,8 @@
-# Yeldos — Code. Form. Experience.
+# Yeldos — делаю веб ощутимым.
 
-Personal frontend portfolio for Yeldos Yegimbayev. Built with React, TypeScript and Vite, with a custom WebGL sculpture and an original dark visual identity.
+Personal frontend portfolio for Yeldos Yegimbayev, built with React, TypeScript and Vite. An ivory-and-ink visual identity, a custom WebGL Y monogram, real project screenshots and interactive studies of motion, depth and feedback.
+
+[Live portfolio](https://yeldos-portfolio.vercel.app/) · [GitHub](https://github.com/TheYeldo/yeldos-portfolio)
 
 ## Run locally
 
@@ -20,35 +22,41 @@ pnpm build
 pnpm preview
 ```
 
-`pnpm build` runs strict TypeScript checks and creates the production site in `dist/`. `vercel.json` configures Vercel to build and serve that directory. No environment variables, database or API keys are required.
+`pnpm build` runs strict TypeScript checks and creates `dist/`. `vercel.json` configures the Vite build, output directory and response headers. No environment variables, database or API keys are required.
 
 ## Features
 
-- Interactive chrome sculpture with silver and emerald materials, pointer response and a CSS fallback when WebGL is unavailable.
-- Filterable projects and accessible native dialogs with repository and live links.
-- About, principles, technology stack, process, motion playground and contact sections.
-- Three easing curves and adjustable duration in the animation playground.
-- Responsive navigation, keyboard focus states, reduced-motion support and a global motion pause.
-- GPU animation pauses when the sculpture is outside the viewport or the tab is hidden.
-- Working Telegram, GitHub, email and clipboard actions.
+- A beveled 3D Y with titanium and obsidian materials, studio reflections, pointer response and a CSS fallback.
+- Scroll-linked storytelling and section reveals with a global motion control and system reduced-motion support.
+- Three detailed project cases with live screenshots, category filters, native dialogs and repository links.
+- About, YelGit and ProcessLens, interactive expertise tabs and a four-step working process.
+- A playground with editable easing and duration, a keyboard-accessible tilt card and a magnetic button.
+- A Telegram contact composer that opens a draft for the selected topic, plus email copy and GitHub links.
+- Responsive navigation, keyboard focus restoration, lazy-loaded project images and offscreen/hidden-tab WebGL pausing.
+- Canonical URL, Person structured data, social preview, robots.txt and sitemap.xml.
 
-## Content and styling
+## Project structure
 
-- `src/App.tsx`: personal information, navigation, sections and animation playground.
-- `src/styles.css`: design tokens, responsive layouts and shared styles.
-- `src/components/Projects.tsx`: project content, links, filters, dialogs and illustrative previews.
-- `src/components/projects.css`: project previews and dialog styling.
-- `src/components/Sculpture.tsx`: dependency-free WebGL renderer and shader.
-- `src/components/sculpture.css`: sculpture presentation and fallback.
-- `index.html`: title and search/social metadata.
+- `src/App.tsx`: navigation, personal content, scroll effects, expertise and contact controls.
+- `src/styles.css`: design tokens, global layout, responsive styles and motion preferences.
+- `src/components/Signature.tsx` and `signature.css`: dependency-free WebGL renderer and CSS fallback.
+- `src/components/Projects.tsx` and `projects.css`: case content, filters, screenshots and dialogs.
+- `src/components/BeyondBrowser.tsx` and `beyond-browser.css`: C++ projects.
+- `src/components/Playground.tsx` and `playground.css`: interactive motion experiments.
+- `public/projects/`: real screenshots from the owner's projects.
+- `index.html`: search/social metadata and structured data.
 
-The project previews are original visual interpretations, explicitly labeled on the site, rather than screenshots. Project descriptions and public contact details are based on the owner's public repositories, previous portfolio and supplied Telegram handle.
+## Content and assets
 
-Manrope is loaded from Google Fonts; the system font stack is used if the font service is unavailable. The site has no analytics or trackers.
+Project descriptions are based on the owner's public repositories and existing portfolio. The Telegram handle was supplied by the owner. No fictional clients, employment, testimonials or performance figures are included.
 
-## Verified flows
+YeldoOS, Taytlo and Programming Simulator screenshots were captured from their public deployments. The ProcessLens screenshot comes from its public repository. All project links and source references are included on the site. The social preview is a screenshot of this portfolio.
 
-Desktop and mobile browser checks cover material switching, pause/resume, project filters, project dialogs and Escape/focus restoration, stack accordions, mobile menu, animation controls and responsive overflow. Lint, formatting and the production build should pass before publication.
+Manrope is loaded from Google Fonts with system-font fallback. The site has no analytics or trackers.
+
+## Browser verification
+
+Check desktop and mobile layouts, material switching, pause/resume, project filters, dialog Escape and focus restoration, expertise and playground keyboard navigation, contact topics and email copying. Run lint, formatting and the production build before publishing.
 
 ## Owner
 

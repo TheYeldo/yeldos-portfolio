@@ -1,247 +1,153 @@
 import { useEffect, useRef, useState } from 'react'
-import Sculpture from './components/Sculpture'
+import Signature from './components/Signature'
 import Projects from './components/Projects'
+import BeyondBrowser from './components/BeyondBrowser'
+import Playground from './components/Playground'
 
-function Arrow({ diagonal = false }: { diagonal?: boolean }) {
+export function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="icon">
-      {diagonal ? <path d="M6 18 18 6M6 6h12v12" /> : <path d="M4 12h15m-6-6 6 6-6 6" />}
+    <svg className="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d={diagonal ? 'M6 18 18 6M6 6h12v12' : 'M4 12h15m-6-6 6 6-6 6'} />
     </svg>
   )
 }
 
 const navigation = [
-  ['projects', 'Проекты'],
+  ['projects', 'Работы'],
   ['about', 'Обо мне'],
-  ['expertise', 'Стек'],
-  ['lab', 'Лаборатория'],
+  ['expertise', 'Подход'],
+  ['lab', 'Playground'],
 ] as const
-
 const expertise = [
   {
-    name: 'Интерфейсы',
-    number: '01',
-    title: 'От первого пикселя до последнего состояния.',
+    title: 'Интерфейс как система',
+    label: '01 / FRONTEND',
     description:
-      'Собираю адаптивные интерфейсы на React и Next.js. Продумываю структуру компонентов, работу с данными и поведение на каждом экране.',
-    tags: ['React', 'Next.js', 'TypeScript', 'HTML & CSS'],
+      'Компоненты, состояние, данные и все состояния между ними. Собираю интерфейсы, которые остаются понятными, когда продукт становится сложнее.',
+    tools: ['React', 'Next.js', 'TypeScript', 'Zustand'],
+    proof: 'В YeldoOS окна, темы и настройки работают как части одной системы.',
+    href: 'https://github.com/TheYeldo/yeldo-os',
   },
   {
-    name: 'Движение и 3D',
-    number: '02',
-    title: 'Когда интерфейс становится впечатлением.',
+    title: 'Движение с намерением',
+    label: '02 / INTERACTION',
     description:
-      'Исследую анимации, пространственные интерфейсы и интерактивные сцены. Движение помогает понять действие и почувствовать отклик.',
-    tags: ['Three.js', 'React Three Fiber', 'Motion', 'WebGL'],
+      'Переходы объясняют, что изменилось. Глубина помогает ориентироваться. А 3D создаёт пространство, которое хочется исследовать.',
+    tools: ['Motion', 'Three.js', 'React Three Fiber', 'WebGL'],
+    proof: 'В Programming Simulator комната превращается в рабочую среду.',
+    href: 'https://github.com/TheYeldo/programming-simulator',
   },
   {
-    name: 'Логика продукта',
-    number: '03',
-    title: 'Красиво снаружи. Продумано внутри.',
+    title: 'Логика за красивым экраном',
+    label: '03 / PRODUCT',
     description:
-      'Соединяю экраны с API, работаю с состоянием, поиском и пользовательскими сценариями. Учитываю загрузку, ошибки и пустые результаты.',
-    tags: ['REST API', 'Zustand', 'Prisma', 'PostgreSQL'],
-  },
-  {
-    name: 'Качество и процесс',
-    number: '04',
-    title: 'Детали, из которых складывается результат.',
-    description:
-      'Использую Git, внимательно отношусь к семантике и доступности. Проверяю адаптивность, читаемость кода и предсказуемость взаимодействий.',
-    tags: ['Git & GitHub', 'Figma', 'Accessibility', 'Responsive UI'],
+      'Поиск, фильтры, API и сохранённое состояние. Продумываю не только удачный путь, но и загрузку, отсутствие данных и ошибки.',
+    tools: ['REST API', 'Prisma', 'PostgreSQL', 'Git'],
+    proof: 'В Taytlo каталог связывает тайтлы, жанры, франшизы и личные списки.',
+    href: 'https://github.com/TheYeldo/taytlo',
   },
 ]
 
-function MotionLab({ paused }: { paused: boolean }) {
-  const [curve, setCurve] = useState('smooth')
-  const [duration, setDuration] = useState(1.4)
-  const [run, setRun] = useState(0)
-  const curves: Record<string, { name: string; css: string; path: string }> = {
-    smooth: {
-      name: 'Плавно',
-      css: 'cubic-bezier(0.22, 1, 0.36, 1)',
-      path: 'M24 160 C58 18 85 20 196 20',
-    },
-    spring: {
-      name: 'Пружина',
-      css: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      path: 'M24 160 C80 -20 135 -15 196 20',
-    },
-    precise: {
-      name: 'Точно',
-      css: 'cubic-bezier(0.76, 0, 0.24, 1)',
-      path: 'M24 160 C160 160 60 20 196 20',
-    },
-  }
-  const selected = curves[curve]
-  return (
-    <section className="lab section-space" id="lab">
-      <div className="container">
-        <div className="section-heading reveal">
-          <div>
-            <p className="eyebrow">05 / PLAYGROUND</p>
-            <h2>
-              Чуть больше
-              <br />
-              <span className="text-muted">чем просто код.</span>
-            </h2>
-          </div>
-          <p className="section-description">
-            Здесь можно потрогать движение.
-            <br />
-            Выбери характер, настрой скорость —<br />и посмотри, как меняется ощущение.
-          </p>
-        </div>
-        <div className="motion-lab reveal">
-          <div className="lab-controls">
-            <div className="lab-label">
-              <span className="status-dot" /> MOTION STUDY — 001
-            </div>
-            <h3>
-              У движения
-              <br />
-              есть характер.
-            </h3>
-            <div className="segmented" role="group" aria-label="Характер анимации">
-              {Object.entries(curves).map(([key, value]) => (
-                <button
-                  key={key}
-                  aria-pressed={curve === key}
-                  onClick={() => {
-                    setCurve(key)
-                    setRun(run + 1)
-                  }}
-                >
-                  {value.name}
-                </button>
-              ))}
-            </div>
-            <label className="range-label" htmlFor="duration">
-              Длительность <span>{duration.toFixed(1)} сек</span>
-            </label>
-            <input
-              id="duration"
-              type="range"
-              min="0.5"
-              max="3"
-              step="0.1"
-              value={duration}
-              onChange={(event) => setDuration(Number(event.target.value))}
-            />
-            <button className="button button-secondary replay" onClick={() => setRun(run + 1)}>
-              Повторить анимацию <span aria-hidden="true">↻</span>
-            </button>
-            <p className="lab-footnote">
-              {paused
-                ? 'Анимации приостановлены. Включить их можно в шапке.'
-                : 'Маленькие детали. Большая разница.'}
-            </p>
-          </div>
-          <div className="lab-stage">
-            <span className="stage-label">INTERACTION / {selected.name.toUpperCase()}</span>
-            <svg
-              className="curve-graph"
-              viewBox="0 0 220 180"
-              role="img"
-              aria-label={`Кривая анимации: ${selected.name}`}
-            >
-              <path className="curve-grid" d="M24 20v140h172M24 90h172M110 20v140" />
-              <path className="curve-line" d={selected.path} />
-              <circle cx="24" cy="160" r="4" />
-              <circle cx="196" cy="20" r="4" />
-            </svg>
-            <div className="lab-track">
-              <span className="track-start" />
-              <div
-                key={`${curve}-${run}`}
-                className="motion-orb"
-                style={{
-                  animationDuration: `${duration}s`,
-                  animationTimingFunction: selected.css,
-                  animationPlayState: paused ? 'paused' : 'running',
-                }}
-              />
-              <span className="track-end" />
-            </div>
-            <div className="stage-bottom">
-              <span>START</span>
-              <code>{selected.css}</code>
-              <span>END</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 export default function App() {
-  const [menuOpen, setMenuOpen] = useState(false)
   const [paused, setPaused] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
-  const [tone, setTone] = useState<'silver' | 'emerald'>('silver')
+  const [tone, setTone] = useState<'titanium' | 'obsidian'>('titanium')
+  const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('')
-  const [copied, setCopied] = useState(false)
-  const [copyError, setCopyError] = useState(false)
-  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const progressRef = useRef<HTMLDivElement>(null)
+  const [expertiseIndex, setExpertiseIndex] = useState(0)
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
+  const [briefType, setBriefType] = useState('Продуктовая команда')
+  const headerRef = useRef<HTMLElement>(null)
+  const navRef = useRef<HTMLElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
+  const storyRef = useRef<HTMLElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const explicitMotion = useRef(false)
 
   useEffect(() => {
     document.documentElement.dataset.motion = paused ? 'paused' : 'active'
   }, [paused])
 
   useEffect(() => {
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const update = () => setPaused(preference.matches)
-    preference.addEventListener('change', update)
-    return () => preference.removeEventListener('change', update)
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => {
+      if (!explicitMotion.current) setPaused(media.matches)
+    }
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
   }, [])
 
   useEffect(() => {
-    const revealObserver = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('is-visible')
-            revealObserver.unobserve(entry.target)
+            observer.unobserve(entry.target)
           }
         })
       },
       { threshold: 0.08 },
     )
-    document.querySelectorAll('.reveal').forEach((element) => {
-      element.classList.add('will-reveal')
-      revealObserver.observe(element)
+    document.querySelectorAll('.reveal').forEach((el) => {
+      el.classList.add('will-reveal')
+      observer.observe(el)
     })
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('main > section[id]'))
     const sectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) setActiveSection(entry.target.id)
         })
       },
-      { rootMargin: '-15% 0px -65% 0px' },
+      { rootMargin: '-20% 0px -65% 0px' },
     )
-    document
-      .querySelectorAll('main section[id]')
-      .forEach((section) => sectionObserver.observe(section))
+    sections.forEach((section) => sectionObserver.observe(section))
     let frame = 0
-    const onScroll = () => {
-      if (frame) return
-      frame = requestAnimationFrame(() => {
-        const height = document.documentElement.scrollHeight - window.innerHeight
-        if (progressRef.current)
-          progressRef.current.style.transform = `scaleX(${height > 0 ? window.scrollY / height : 0})`
-        frame = 0
-      })
+    const updateScroll = () => {
+      frame = 0
+      const vh = window.innerHeight
+      const y = window.scrollY
+      const max = document.documentElement.scrollHeight - vh
+      progressRef.current?.style.setProperty('transform', `scaleX(${max > 0 ? y / max : 0})`)
+      const motion = document.documentElement.dataset.motion !== 'paused'
+      const hero = heroRef.current
+      if (hero)
+        hero.style.setProperty(
+          '--hero-progress',
+          String(motion ? Math.min(y / hero.offsetHeight, 1) : 0),
+        )
+      const story = storyRef.current
+      if (story) {
+        const rect = story.getBoundingClientRect()
+        const p = Math.max(0, Math.min(1, (vh * 0.72 - rect.top) / (rect.height - vh * 0.25)))
+        story.style.setProperty('--story-progress', String(motion ? p : 1))
+        story.dataset.step = p < 0.34 ? '1' : p < 0.67 ? '2' : '3'
+      }
+      let theme = 'light'
+      for (const section of sections) {
+        const bounds = section.getBoundingClientRect()
+        if (bounds.top <= 70 && bounds.bottom > 70) {
+          theme = section.dataset.tone || 'light'
+          break
+        }
+      }
+      if (headerRef.current) headerRef.current.dataset.tone = theme
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(updateScroll)
+    }
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    schedule()
     return () => {
-      revealObserver.disconnect()
+      observer.disconnect()
       sectionObserver.disconnect()
-      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
       cancelAnimationFrame(frame)
       clearTimeout(copyTimer.current)
     }
@@ -249,91 +155,93 @@ export default function App() {
 
   useEffect(() => {
     if (!menuOpen) return
-    const closeOnEscape = (event: KeyboardEvent) => {
+    navRef.current?.querySelector<HTMLAnchorElement>('a')?.focus()
+    const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setMenuOpen(false)
         menuButtonRef.current?.focus()
       }
     }
-    document.addEventListener('keydown', closeOnEscape)
-    return () => document.removeEventListener('keydown', closeOnEscape)
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
   }, [menuOpen])
+
+  function toggleMotion() {
+    explicitMotion.current = true
+    setPaused((value) => !value)
+  }
 
   async function copyEmail() {
     try {
       await navigator.clipboard.writeText('eldosegimbaev606@gmail.com')
-      setCopied(true)
-      setCopyError(false)
+      setCopyState('copied')
       clearTimeout(copyTimer.current)
-      copyTimer.current = setTimeout(() => setCopied(false), 2500)
+      copyTimer.current = setTimeout(() => setCopyState('idle'), 2500)
     } catch {
-      setCopyError(true)
+      setCopyState('error')
     }
   }
 
+  const selectedExpertise = expertise[expertiseIndex]
+  const telegramMessage = encodeURIComponent(
+    `Привет, Yeldos! Хочу обсудить: ${briefType.toLowerCase()}.`,
+  )
   return (
     <>
       <a className="skip-link" href="#main">
         Перейти к содержимому
       </a>
-      <header className="site-header">
-        <div className="scroll-progress" ref={progressRef} />
+      <header ref={headerRef} className="site-header" data-tone="light">
+        <div ref={progressRef} className="scroll-progress" />
         <div className="header-inner container">
-          <a href="#top" className="wordmark" aria-label="Yeldos — на главную">
-            yeldos<span>®</span>
+          <a className="wordmark" href="#top" aria-label="Yeldos — на главную">
+            <svg viewBox="0 0 28 28" aria-hidden="true">
+              <path d="M5 4h6l3 7 3-7h6l-6 13v7h-6v-7z" fill="currentColor" />
+            </svg>
+            yeldos<span className="wordmark-period">.</span>
           </a>
           <nav
+            ref={navRef}
             id="navigation"
+            className={`navigation${menuOpen ? ' is-open' : ''}`}
             aria-label="Основная навигация"
-            className={menuOpen ? 'navigation is-open' : 'navigation'}
           >
             {navigation.map(([id, label]) => (
               <a
-                href={`#${id}`}
                 key={id}
-                className={activeSection === id ? 'active' : ''}
+                href={`#${id}`}
+                aria-current={activeSection === id ? 'location' : undefined}
                 onClick={() => setMenuOpen(false)}
               >
                 {label}
               </a>
             ))}
-            <a href="#contact" className="mobile-contact" onClick={() => setMenuOpen(false)}>
+            <a className="mobile-contact" href="#contact" onClick={() => setMenuOpen(false)}>
               Контакты
             </a>
           </nav>
           <div className="header-actions">
             <button
               className="motion-toggle"
-              onClick={() => setPaused(!paused)}
+              onClick={toggleMotion}
               aria-label={paused ? 'Включить анимации' : 'Приостановить анимации'}
               aria-pressed={paused}
               title={paused ? 'Включить анимации' : 'Приостановить анимации'}
             >
-              {paused ? (
-                <svg className="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="m9 5 10 7-10 7z" />
-                </svg>
-              ) : (
-                <svg className="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M8 5v14M16 5v14" />
-                </svg>
-              )}
+              <svg className="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <path d={paused ? 'm9 5 10 7-10 7z' : 'M8 6v12M16 6v12'} />
+              </svg>
             </button>
-            <a
-              className="header-contact"
-              href="https://t.me/Yeldomr"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Обсудим проект <Arrow diagonal />
+            <a className="header-contact" href="#contact">
+              Есть идея? <Arrow diagonal />
             </a>
             <button
               ref={menuButtonRef}
               className="menu-toggle"
               aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
-              aria-expanded={menuOpen}
               aria-controls="navigation"
-              onClick={() => setMenuOpen(!menuOpen)}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((value) => !value)}
             >
               <span />
               <span />
@@ -342,249 +250,328 @@ export default function App() {
         </div>
       </header>
       <main id="main">
-        <section className="hero" id="top">
-          <div className="hero-glow" aria-hidden="true" />
-          <div className="container hero-content">
+        <section ref={heroRef} className="hero" id="top" data-tone="light">
+          <div className="hero-grid container">
             <div className="hero-copy">
-              <div className="hero-kicker">
-                <span className="status-dot" /> FRONTEND DEVELOPER & CREATIVE MIND
-              </div>
+              <p className="hero-eyebrow">
+                <span className="status-dot" /> FRONTEND DEVELOPER{' '}
+                <span className="hero-location">АЛМАТЫ, KZ</span>
+              </p>
               <h1>
-                Код.
-                <br />
-                Форма.
-                <br />
-                <span>Впечатление.</span>
+                <span className="hero-name">Yeldos.</span>
+                <span className="hero-title">
+                  Делаю веб
+                  <br />
+                  <span className="hero-title-soft">ощутимым.</span>
+                </span>
               </h1>
               <p className="hero-description">
-                Привет, я <strong>Yeldos</strong>. Создаю цифровой опыт,
-                <br className="desktop-break" /> в котором продумана каждая деталь.
+                Пишу код. Чувствую форму.
+                <br />
+                Превращаю идеи в интерфейсы, которыми хочется пользоваться.
               </p>
               <div className="hero-buttons">
                 <a className="button button-primary" href="#projects">
-                  Смотреть проекты <Arrow />
+                  Исследовать работы <Arrow />
                 </a>
-                <a className="hero-about" href="#about">
-                  Ближе познакомиться <span aria-hidden="true">↗</span>
+                <a className="text-link" href="#about">
+                  Кто за этим стоит <span aria-hidden="true">↗</span>
                 </a>
+              </div>
+              <div className="hero-stack">
+                <span>REACT</span>
+                <i />
+                <span>TYPESCRIPT</span>
+                <i />
+                <span>NEXT.JS</span>
               </div>
             </div>
-            <div className="hero-art">
-              <div className="sculpture-frame">
-                <Sculpture paused={paused} tone={tone} />
+            <div className="hero-visual">
+              <span className="visual-coordinate coordinate-top">SIGNATURE / 001</span>
+              <span className="visual-coordinate coordinate-right">DESIGNED IN CODE</span>
+              <div className="signature-stage">
+                <Signature paused={paused} tone={tone} />
               </div>
-              <div className="art-label">
-                <span className="art-cross" aria-hidden="true">
+              <div className="signature-caption">
+                <span className="tiny-cross" aria-hidden="true">
                   +
                 </span>
-                <span>
-                  FORM FOLLOWS CURIOSITY
+                <p>
+                  Моя буква. Мой подход.
                   <br />
-                  <span className="text-muted">Интерактивная форма. Живой код.</span>
-                </span>
+                  <span>Наведи курсор — форма откликнется.</span>
+                </p>
               </div>
-              <div className="material-control" role="group" aria-label="Материал 3D-фигуры">
-                <button
-                  className="material-swatch silver"
-                  aria-pressed={tone === 'silver'}
-                  aria-label="Серебряный материал"
-                  onClick={() => setTone('silver')}
-                />
-                <button
-                  className="material-swatch emerald"
-                  aria-pressed={tone === 'emerald'}
-                  aria-label="Изумрудный материал"
-                  onClick={() => setTone('emerald')}
-                />
-                <span>{tone === 'silver' ? 'SILVER' : 'EMERALD'}</span>
+              <div className="material-control" role="group" aria-label="Материал монограммы">
+                <button aria-pressed={tone === 'titanium'} onClick={() => setTone('titanium')}>
+                  <i className="titanium-swatch" />
+                  Титан
+                </button>
+                <button aria-pressed={tone === 'obsidian'} onClick={() => setTone('obsidian')}>
+                  <i className="obsidian-swatch" />
+                  Обсидиан
+                </button>
               </div>
             </div>
           </div>
           <div className="hero-bottom container">
-            <span>
-              БАЗИРУЮСЬ В КАЗАХСТАНЕ <span className="tiny-star">✳</span> СОЗДАЮ ДЛЯ МИРА
-            </span>
-            <a href="#projects">
-              SCROLL TO EXPLORE <span aria-hidden="true">↓</span>
+            <span>ПЕРСОНАЛЬНОЕ ПОРТФОЛИО / 2026</span>
+            <a href="#story">
+              Листай. Дальше интереснее. <span aria-hidden="true">↓</span>
             </a>
-            <span>PORTFOLIO — 2026</span>
+            <span>
+              СОЗДАНО С ЛЮБОПЫТСТВОМ <span aria-hidden="true">✳</span>
+            </span>
           </div>
         </section>
-        <div className="stack-ribbon" aria-label="Основные технологии">
-          <div className="container">
-            <span>МОЙ НАБОР ИНСТРУМЕНТОВ</span>
-            <span className="stack-word">React</span>
-            <span className="stack-word">Next.js</span>
-            <span className="stack-word">TypeScript</span>
-            <span className="stack-word">Three.js</span>
-            <span className="stack-word">Figma</span>
-            <span className="stack-word">Git</span>
-          </div>
-        </div>
-        <Projects />
-        <section className="about section-space" id="about">
-          <div className="container">
-            <div className="section-heading reveal">
-              <div>
-                <p className="eyebrow">02 / ЗА ИНТЕРФЕЙСОМ</p>
-                <h2>
-                  Разработчик.
-                  <br />
-                  <span className="text-muted">По природе — создатель.</span>
-                </h2>
-              </div>
+        <section ref={storyRef} className="story" id="story" data-step="1" data-tone="light">
+          <div className="story-sticky container">
+            <div className="section-kicker">
+              <span>01 / МОЯ ТОЧКА ЗРЕНИЯ</span>
+              <span>ОТ ИДЕИ ДО ОЩУЩЕНИЯ</span>
             </div>
-            <div className="about-grid">
-              <div className="about-portrait reveal">
-                <div className="portrait-grid" aria-hidden="true" />
-                <div className="monogram" aria-hidden="true">
-                  Y<span>.</span>
-                </div>
-                <div className="portrait-caption">
-                  <span>YELDOS YEGIMBAYEV</span>
-                  <span>FRONTEND DEVELOPER</span>
-                </div>
-                <span className="portrait-location">
-                  <span className="status-dot" /> Kazakhstan
+            <h2 className="story-statement">
+              Хороший интерфейс
+              <br />
+              <span>хочется исследовать.</span>
+              <br />И легко понять.
+            </h2>
+            <div className="story-lower">
+              <p>
+                Я соединяю разработку, визуальный ритм
+                <br className="desktop-break" /> и интерактивность. Чтобы за эффектным
+                <br className="desktop-break" /> первым впечатлением был работающий продукт.
+              </p>
+              <div className="story-stages" aria-label="От идеи к результату">
+                <span data-stage="1">
+                  <b>01</b> Любопытство
+                </span>
+                <i />
+                <span data-stage="2">
+                  <b>02</b> Эксперимент
+                </span>
+                <i />
+                <span data-stage="3">
+                  <b>03</b> Продукт
                 </span>
               </div>
-              <div className="about-copy reveal">
-                <p className="about-lead">
-                  Мне нравится момент,
+            </div>
+            <span className="story-asterisk" aria-hidden="true">
+              ✳
+            </span>
+          </div>
+        </section>
+        <Projects />
+        <section className="about section-space" id="about" data-tone="light">
+          <div className="container">
+            <div className="section-kicker reveal">
+              <span>03 / ЧЕЛОВЕК ЗА КОДОМ</span>
+              <span>YELDOS YEGIMBAYEV</span>
+            </div>
+            <div className="about-editorial">
+              <div className="about-left reveal">
+                <h2>
+                  Люблю разбираться.
                   <br />
-                  когда идея <span>становится живой.</span>
+                  Ещё больше —<br />
+                  <span className="serif-word">создавать.</span>
+                </h2>
+                <div className="personal-note">
+                  <svg viewBox="0 0 130 50" fill="none" aria-hidden="true">
+                    <path
+                      d="M4 12 21 37 44 3M24 33l-7 14M46 28q-10 12 2 12l12-7M62 7l-7 32 12-11-4 12 15-10M79 25q-15 15-1 15l7-9q-7-8-6 6M93 26q-14 9-1 10t1 7M108 35l16-7"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>Всегда есть что исследовать.</span>
+                </div>
+              </div>
+              <div className="about-right reveal">
+                <p className="about-intro">
+                  Привет, я Елдос.
+                  <br />
+                  Frontend-разработчик из Казахстана.
                 </p>
                 <p>
-                  Я Елдос Егимбаев, frontend-разработчик из Казахстана. Превращаю макеты в
-                  адаптивные интерфейсы и соединяю визуальную аккуратность с понятной логикой.
+                  Мне интересно, как идея превращается в вещь, которой можно пользоваться. Поэтому в
+                  моих проектах есть и каталог аниме, и рабочий стол в браузере, и комната, в
+                  которой можно писать код.
                 </p>
                 <p>
-                  Мой интерес — на пересечении разработки и дизайна: от удобных React-приложений до
-                  браузерных операционных систем и интерактивных 3D-миров.
+                  Люблю точные интерфейсы: понятную структуру, аккуратную типографику, хороший
+                  отклик. А когда хочется понять инструмент глубже — могу собрать собственную
+                  систему контроля версий на C++.
                 </p>
-                <a
-                  className="text-link"
-                  href="https://github.com/TheYeldo"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Больше обо мне в GitHub <Arrow diagonal />
-                </a>
-                <div className="about-facts">
-                  <div>
-                    <span>ФОКУС</span>
-                    <strong>Frontend & UI</strong>
-                  </div>
-                  <div>
-                    <span>ПОДХОД</span>
-                    <strong>Внимание к деталям</strong>
-                  </div>
+                <div className="about-foot">
+                  <span>
+                    <i className="status-dot" /> Алматы, Казахстан
+                  </span>
+                  <a href="https://github.com/TheYeldo" target="_blank" rel="noreferrer">
+                    Посмотреть GitHub <Arrow diagonal />
+                  </a>
                 </div>
               </div>
             </div>
-            <div className="principles">
-              <article className="reveal">
-                <span className="principle-symbol">✳</span>
-                <h3>Смысл прежде эффекта.</h3>
-                <p>Каждая анимация и каждый элемент помогают пользователю двигаться дальше.</p>
-              </article>
-              <article className="reveal">
-                <span className="principle-symbol">⌘</span>
-                <h3>Красота в системе.</h3>
-                <p>Чистая структура, переиспользуемые компоненты и предсказуемое поведение.</p>
-              </article>
-              <article className="reveal">
-                <span className="principle-symbol">↗</span>
-                <h3>Любопытство как навык.</h3>
-                <p>Новые технологии — повод исследовать, пробовать и создавать что-то своё.</p>
-              </article>
-            </div>
-          </div>
-        </section>
-        <section className="expertise section-space" id="expertise">
-          <div className="container expertise-layout">
-            <div className="expertise-intro reveal">
-              <p className="eyebrow">03 / ЭКСПЕРТИЗА</p>
-              <h2>
-                Не только
-                <br />
-                <span className="text-muted">красивый экран.</span>
-              </h2>
-              <p>
-                Инструменты меняются.
-                <br />
-                Внимание к опыту — остаётся.
-              </p>
-              <div className="code-emblem" aria-hidden="true">
-                {'{ }'}
-                <span>BUILT WITH INTENTION</span>
+            <div className="about-beliefs reveal">
+              <div>
+                <span>01</span>
+                <p>
+                  Честный продукт.
+                  <br />
+                  <strong>Реальные состояния.</strong>
+                </p>
+              </div>
+              <div>
+                <span>02</span>
+                <p>
+                  Выразительный дизайн.
+                  <br />
+                  <strong>Понятное поведение.</strong>
+                </p>
+              </div>
+              <div>
+                <span>03</span>
+                <p>
+                  Чистый код.
+                  <br />
+                  <strong>Пространство для роста.</strong>
+                </p>
               </div>
             </div>
-            <div className="expertise-list reveal">
-              {expertise.map((item, index) => (
-                <details key={item.name} name="expertise" open={index === 0 ? true : undefined}>
-                  <summary>
-                    <span className="item-number">{item.number}</span>
-                    <h3>{item.name}</h3>
-                    <span className="details-plus" aria-hidden="true">
-                      +
-                    </span>
-                  </summary>
-                  <div className="expertise-detail">
-                    <h4>{item.title}</h4>
-                    <p>{item.description}</p>
-                    <div className="tags">
-                      {item.tags.map((tag) => (
-                        <span key={tag}>{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </details>
-              ))}
-            </div>
           </div>
         </section>
-        <section className="process section-space" id="process">
+        <BeyondBrowser />
+        <section className="expertise section-space" id="expertise" data-tone="light">
           <div className="container">
             <div className="section-heading reveal">
               <div>
-                <p className="eyebrow">04 / ПРОЦЕСС</p>
+                <p className="eyebrow">05 / КАК Я ДУМАЮ</p>
                 <h2>
-                  От «а что, если»
+                  Детали работают.
                   <br />
-                  <span className="text-muted">до «вот, попробуй».</span>
+                  <span className="text-muted">Вместе.</span>
                 </h2>
               </div>
               <p className="section-description">
-                Понятный путь от задачи до результата.
-                <br />С диалогом на каждом этапе.
+                Каждый инструмент нужен для конкретной задачи. <br />
+                Вот как это выглядит в моих проектах.
               </p>
+            </div>
+            <div className="expertise-layout reveal">
+              <div className="expertise-tabs" role="tablist" aria-label="Направления работы">
+                {expertise.map((item, index) => (
+                  <button
+                    id={`expertise-tab-${index}`}
+                    key={item.title}
+                    role="tab"
+                    aria-selected={expertiseIndex === index}
+                    aria-controls="expertise-panel"
+                    tabIndex={expertiseIndex === index ? 0 : -1}
+                    onClick={() => setExpertiseIndex(index)}
+                    onKeyDown={(event) => {
+                      if (
+                        ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft', 'Home', 'End'].includes(
+                          event.key,
+                        )
+                      ) {
+                        event.preventDefault()
+                        const next =
+                          event.key === 'Home'
+                            ? 0
+                            : event.key === 'End'
+                              ? expertise.length - 1
+                              : (index +
+                                  (event.key === 'ArrowDown' || event.key === 'ArrowRight'
+                                    ? 1
+                                    : expertise.length - 1)) %
+                                expertise.length
+                        setExpertiseIndex(next)
+                        document.getElementById(`expertise-tab-${next}`)?.focus()
+                      }
+                    }}
+                  >
+                    <span>{item.label}</span>
+                    <strong>{item.title}</strong>
+                    <Arrow diagonal />
+                  </button>
+                ))}
+              </div>
+              <div
+                id="expertise-panel"
+                role="tabpanel"
+                tabIndex={0}
+                aria-labelledby={`expertise-tab-${expertiseIndex}`}
+                className="expertise-panel"
+              >
+                <div className={`expertise-diagram diagram-${expertiseIndex}`} aria-hidden="true">
+                  <div className="diagram-ring ring-one" />
+                  <div className="diagram-ring ring-two" />
+                  <div className="diagram-ring ring-three" />
+                  <div className="diagram-core">
+                    {expertiseIndex === 0 ? '{ }' : expertiseIndex === 1 ? '✳' : '↗'}
+                  </div>
+                  <span>
+                    {expertiseIndex === 0
+                      ? 'COMPONENT → SYSTEM'
+                      : expertiseIndex === 1
+                        ? 'INTENTION → MOTION'
+                        : 'DATA → EXPERIENCE'}
+                  </span>
+                </div>
+                <h3>{selectedExpertise.title}</h3>
+                <p>{selectedExpertise.description}</p>
+                <div className="tags">
+                  {selectedExpertise.tools.map((tool) => (
+                    <span key={tool}>{tool}</span>
+                  ))}
+                </div>
+                <a
+                  className="expertise-proof"
+                  href={selectedExpertise.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>{selectedExpertise.proof}</span>
+                  <Arrow diagonal />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="process" id="process" data-tone="light">
+          <div className="container">
+            <div className="section-kicker reveal">
+              <span>ПОНЯТНЫЙ ПУТЬ ДО РЕЗУЛЬТАТА</span>
+              <span>01 → 04</span>
             </div>
             <div className="process-grid">
               {[
                 [
                   '01',
-                  'Понять',
-                  'Погружаюсь в задачу, обсуждаю цель, аудиторию и сценарии использования.',
+                  'Сначала — зачем.',
+                  'Обсуждаем задачу, аудиторию и то, что должно измениться для пользователя.',
                 ],
                 [
                   '02',
-                  'Продумать',
-                  'Собираю структуру, определяю визуальный язык и поведение интерфейса.',
+                  'Потом — как.',
+                  'Прорабатываю структуру, состояния, визуальный язык и взаимодействия.',
                 ],
                 [
                   '03',
-                  'Создать',
-                  'Пишу компоненты, соединяю логику и добавляю движение там, где оно нужно.',
+                  'Дальше — в код.',
+                  'Собираю компоненты, подключаю данные и оживляю интерфейс.',
                 ],
                 [
                   '04',
-                  'Отточить',
-                  'Проверяю на разных экранах, прорабатываю состояния и учитываю обратную связь.',
+                  'И ещё один проход.',
+                  'Проверяю экраны, клавиатуру, скорость и все небольшие «а если».',
                 ],
               ].map(([number, title, description]) => (
                 <article className="process-step reveal" key={number}>
-                  <div className="process-top">
+                  <div>
                     <span>{number}</span>
                     <Arrow />
                   </div>
@@ -595,80 +582,88 @@ export default function App() {
             </div>
           </div>
         </section>
-        <MotionLab paused={paused} />
-        <section className="contact section-space" id="contact">
+        <Playground paused={paused} />
+        <section className="contact section-space" id="contact" data-tone="dark">
           <div className="container">
-            <div className="contact-top reveal">
-              <p className="eyebrow">
-                <span className="status-dot" /> ОТКРЫТ К ДИАЛОГУ И НОВЫМ ИДЕЯМ
-              </p>
-              <span className="contact-spark" aria-hidden="true">
+            <div className="section-kicker reveal">
+              <span>
+                <i className="status-dot" /> ОТКРЫТ К НОВЫМ ИДЕЯМ
+              </span>
+              <span>LET’S MAKE SOMETHING GOOD</span>
+            </div>
+            <div className="contact-title reveal">
+              <h2>
+                Есть идея?
+                <br />
+                <span>Давай создадим.</span>
+              </h2>
+              <span className="contact-star" aria-hidden="true">
                 ✳
               </span>
             </div>
-            <div className="contact-main reveal">
-              <h2>
-                Следующий проект
-                <br />
-                может быть <span>нашим.</span>
-              </h2>
-              <a
-                className="contact-round"
-                href="https://t.me/Yeldomr"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Обсудить проект в Telegram"
-              >
-                <Arrow diagonal />
-              </a>
-            </div>
-            <div className="contact-bottom reveal">
+            <div className="contact-layout reveal">
               <p>
-                Есть идея, задача или просто хочется сказать привет?
-                <br />
-                Давай начнём с разговора.
+                Продукт, интерфейс или необычный эксперимент. <br />
+                Расскажи, что задумал — начнём с разговора.
               </p>
-              <div className="contact-links">
-                <a href="https://t.me/Yeldomr" target="_blank" rel="noreferrer">
-                  Telegram <Arrow diagonal />
+              <div className="contact-composer">
+                <span className="composer-label">ЧТО ОБСУДИМ?</span>
+                <div className="brief-options" role="group" aria-label="Тема сообщения">
+                  {['Продуктовая команда', 'Разработка сайта', 'Интересная идея'].map((type) => (
+                    <button
+                      key={type}
+                      aria-pressed={briefType === type}
+                      onClick={() => setBriefType(type)}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+                <a
+                  className="contact-send"
+                  href={`https://t.me/Yeldomr?text=${telegramMessage}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span>
+                    Написать в Telegram<small>@Yeldomr</small>
+                  </span>
+                  <Arrow diagonal />
                 </a>
-                <a href="mailto:eldosegimbaev606@gmail.com">
-                  Email <Arrow diagonal />
-                </a>
-                <button onClick={copyEmail} aria-label="Скопировать email">
-                  {copied ? 'Скопировано ✓' : 'Копировать email'}
-                </button>
-                <span className="sr-only" role="status">
-                  {copied
-                    ? 'Email скопирован'
-                    : copyError
-                      ? 'Не удалось скопировать. Email: eldosegimbaev606@gmail.com'
-                      : ''}
-                </span>
+                <p className="composer-hint">Откроется Telegram с выбранной темой сообщения.</p>
               </div>
             </div>
-            {copyError ? (
-              <p className="copy-error">Можно скопировать вручную: eldosegimbaev606@gmail.com</p>
-            ) : null}
+            <div className="contact-secondary">
+              <a href="mailto:eldosegimbaev606@gmail.com">
+                eldosegimbaev606@gmail.com <Arrow diagonal />
+              </a>
+              <button onClick={copyEmail}>
+                {copyState === 'copied' ? 'Скопировано ✓' : 'Скопировать email'}
+              </button>
+              <span role="status" className={copyState === 'error' ? 'copy-error' : 'sr-only'}>
+                {copyState === 'copied'
+                  ? 'Email скопирован'
+                  : copyState === 'error'
+                    ? 'Не удалось скопировать. Адрес можно выделить выше.'
+                    : ''}
+              </span>
+              <a href="https://github.com/TheYeldo" target="_blank" rel="noreferrer">
+                GitHub <Arrow diagonal />
+              </a>
+            </div>
           </div>
+          <div className="footer-wordmark" aria-hidden="true">
+            yeldos<span>.</span>
+          </div>
+          <footer className="footer container">
+            <span>© {new Date().getFullYear()} YELDOS YEGIMBAYEV</span>
+            <span>ПРОДУМАНО. НАПИСАНО. ОЖИВЛЕНО.</span>
+            <a href="#top">
+              Вернуться наверх <span aria-hidden="true">↑</span>
+            </a>
+          </footer>
         </section>
       </main>
-      <footer className="footer">
-        <div className="container footer-inner">
-          <a className="wordmark" href="#top" aria-label="Yeldos — наверх">
-            yeldos<span>®</span>
-          </a>
-          <p>© {new Date().getFullYear()} Yeldos. Сделано с вниманием.</p>
-          <div>
-            <a href="https://github.com/TheYeldo" target="_blank" rel="noreferrer">
-              GitHub <Arrow diagonal />
-            </a>
-            <a href="#top">
-              Наверх <span aria-hidden="true">↑</span>
-            </a>
-          </div>
-        </div>
-      </footer>
     </>
   )
 }
