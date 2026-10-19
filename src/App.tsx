@@ -49,9 +49,23 @@ const expertise = [
   },
 ]
 
+const motionPreferenceKey = 'yeldos:motion:v1'
+
+function readMotionPreference() {
+  try {
+    const value = localStorage.getItem(motionPreferenceKey)
+    return value === 'paused' || value === 'active' ? value : null
+  } catch {
+    return null
+  }
+}
+
 export default function App() {
-  const [paused, setPaused] = useState(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  const [initialMotion] = useState(readMotionPreference)
+  const [paused, setPaused] = useState(() =>
+    initialMotion
+      ? initialMotion === 'paused'
+      : window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
   const [tone, setTone] = useState<'titanium' | 'obsidian'>('titanium')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -66,7 +80,7 @@ export default function App() {
   const storyRef = useRef<HTMLElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
   const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const explicitMotion = useRef(false)
+  const explicitMotion = useRef(initialMotion !== null)
 
   useEffect(() => {
     document.documentElement.dataset.motion = paused ? 'paused' : 'active'
@@ -77,8 +91,18 @@ export default function App() {
     const update = () => {
       if (!explicitMotion.current) setPaused(media.matches)
     }
+    const syncPreference = (event: StorageEvent) => {
+      if (event.key !== motionPreferenceKey && event.key !== null) return
+      const preference = readMotionPreference()
+      explicitMotion.current = preference !== null
+      setPaused(preference ? preference === 'paused' : media.matches)
+    }
     media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
+    window.addEventListener('storage', syncPreference)
+    return () => {
+      media.removeEventListener('change', update)
+      window.removeEventListener('storage', syncPreference)
+    }
   }, [])
 
   useEffect(() => {
@@ -169,7 +193,13 @@ export default function App() {
 
   function toggleMotion() {
     explicitMotion.current = true
-    setPaused((value) => !value)
+    const next = !paused
+    setPaused(next)
+    try {
+      localStorage.setItem(motionPreferenceKey, next ? 'paused' : 'active')
+    } catch {
+      // Motion controls remain available when browser storage is blocked.
+    }
   }
 
   async function copyEmail() {

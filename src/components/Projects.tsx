@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { MouseEvent } from 'react'
+import ImageViewer from './ImageViewer'
 import './projects.css'
 
 type Project = {
@@ -163,7 +164,17 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   )
 }
 
-function ProjectFrame({ project, compact = false }: { project: Project; compact?: boolean }) {
+type ProjectView = 'editor' | 'room'
+
+function ProjectFrame({
+  project,
+  compact = false,
+  onInspect,
+}: {
+  project: Project
+  compact?: boolean
+  onInspect: (project: Project, view: ProjectView) => void
+}) {
   const [view, setView] = useState<'editor' | 'room'>('editor')
   const isSimulator = project.id === 'programming-simulator'
   const image = isSimulator && view === 'room' ? 'programming-room' : project.id
@@ -203,20 +214,33 @@ function ProjectFrame({ project, compact = false }: { project: Project; compact?
           </span>
           <span className="project-browser-corner">↗</span>
         </div>
-        <img
-          key={image}
-          className="project-screenshot"
-          src={`/projects/${image}.jpg`}
-          alt={
-            isSimulator && view === 'room'
-              ? 'Programming Simulator: ночная 3D-комната с рабочим столом и монитором'
-              : project.imageAlt
-          }
-          width="1280"
-          height="720"
-          loading="lazy"
-          decoding="async"
-        />
+        <button
+          className="project-preview"
+          type="button"
+          aria-label={`Рассмотреть скриншот ${project.title}`}
+          onClick={() => onInspect(project, view)}
+        >
+          <img
+            key={image}
+            className="project-screenshot"
+            src={`/projects/${image}.jpg`}
+            alt={
+              isSimulator && view === 'room'
+                ? 'Programming Simulator: ночная 3D-комната с рабочим столом и монитором'
+                : project.imageAlt
+            }
+            width="1280"
+            height="720"
+            loading="lazy"
+            decoding="async"
+          />
+          <span className="project-preview-hint" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4" />
+            </svg>
+            Рассмотреть
+          </span>
+        </button>
       </div>
       {!compact && (
         <div className="project-stage-bottomline">
@@ -239,6 +263,7 @@ export default function Projects() {
   const [filter, setFilter] = useState<(typeof filters)[number]['id']>('all')
   const [activeProject, setActiveProject] = useState<Project['id']>('yeldo-os')
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [gallery, setGallery] = useState<{ project: Project; view: ProjectView } | null>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const visibleProjects = projects.filter((project) => filter === 'all' || project.group === filter)
@@ -296,6 +321,10 @@ export default function Projects() {
   function showProject(project: Project, event: MouseEvent<HTMLButtonElement>) {
     triggerRef.current = event.currentTarget
     setSelectedProject(project)
+  }
+
+  function inspectImage(project: Project, view: ProjectView) {
+    setGallery({ project, view })
   }
 
   function closeProject() {
@@ -401,7 +430,7 @@ export default function Projects() {
                 </div>
                 <p className="project-chapter-description">{project.description}</p>
               </header>
-              <ProjectFrame project={project} />
+              <ProjectFrame project={project} onInspect={inspectImage} />
               <div className="project-chapter-details">
                 <h4>{project.headline}</h4>
                 <div className="project-short-story">
@@ -520,7 +549,12 @@ export default function Projects() {
               <h2 id="project-dialog-title">{selectedProject.title}</h2>
               <p className="project-dialog-lead">{selectedProject.headline}</p>
             </div>
-            <ProjectFrame key={selectedProject.id} project={selectedProject} compact />
+            <ProjectFrame
+              key={selectedProject.id}
+              project={selectedProject}
+              onInspect={inspectImage}
+              compact
+            />
             <div className="project-dialog-body">
               <div className="project-facts">
                 {selectedProject.facts.map((fact) => (
@@ -586,6 +620,34 @@ export default function Projects() {
           </div>
         )}
       </dialog>
+      {gallery && (
+        <ImageViewer
+          title={gallery.project.title}
+          initialIndex={gallery.view === 'room' ? 1 : 0}
+          images={[
+            {
+              src: `/projects/${gallery.project.id}.jpg`,
+              alt: gallery.project.imageAlt,
+              label:
+                gallery.project.id === 'programming-simulator'
+                  ? 'Редактор кода'
+                  : gallery.project.id === 'yeldo-os'
+                    ? 'Рабочий стол'
+                    : 'Каталог аниме',
+            },
+            ...(gallery.project.id === 'programming-simulator'
+              ? [
+                  {
+                    src: '/projects/programming-room.jpg',
+                    alt: 'Programming Simulator: ночная 3D-комната с рабочим столом и монитором',
+                    label: '3D-комната',
+                  },
+                ]
+              : []),
+          ]}
+          onClose={() => setGallery(null)}
+        />
+      )}
     </section>
   )
 }

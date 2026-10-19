@@ -205,7 +205,7 @@
 }
 .project-chapter-description {
   color: #a9b0a4;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
   margin: 0;
   padding-bottom: 1px;
@@ -322,6 +322,59 @@
   font-size: 14px;
   color: #737b69;
 }
+.project-preview {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: #171c18;
+  cursor: zoom-in;
+}
+.project-preview-hint {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border: 1px solid #ffffff35;
+  border-radius: 100px;
+  background: #151a13dd;
+  backdrop-filter: blur(12px);
+  color: #f4f4f0;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(5px);
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.project-preview-hint svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+.project-preview:is(:hover, :focus-visible) .project-preview-hint {
+  opacity: 1;
+  transform: none;
+}
+.project-stage .project-preview:focus-visible {
+  outline: 3px solid #d7f96b;
+  outline-offset: -3px;
+}
+@media (hover: none), (max-width: 700px) {
+  .project-preview-hint {
+    opacity: 1;
+    transform: none;
+    right: 8px;
+    bottom: 8px;
+    font-size: 11px;
+    padding: 8px 11px;
+  }
+}
 .project-screenshot {
   display: block;
   width: 100%;
@@ -388,7 +441,7 @@
 }
 .project-short-story p {
   margin: 11px 0 0;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.85;
   color: #939f8d;
 }
@@ -423,7 +476,7 @@
   background: none;
   padding: 0;
   color: #eff2e9;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 .project-open-button > span {
@@ -626,13 +679,13 @@
 }
 .project-dialog-body h3 {
   margin: 0 0 13px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
   color: #e2e8dc;
 }
 .project-dialog-overview p {
   margin: 0;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.9;
   color: #9eac93;
 }
@@ -657,14 +710,14 @@
   margin-top: 3px;
 }
 .project-decision h4 {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 450;
   color: #dbe4d2;
   line-height: 1.4;
   margin: 0 0 10px;
 }
 .project-decision p {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.9;
   color: #95a48a;
   margin: 0;
@@ -752,7 +805,7 @@
     font-size: 31px;
   }
   .project-chapter-description {
-    font-size: 11px;
+    font-size: 14px;
   }
   .project-stage {
     padding: 25px 38px;
@@ -775,7 +828,7 @@
     font-size: 23px;
   }
   .project-short-story p {
-    font-size: 11px;
+    font-size: 14px;
   }
   .project-experiments {
     gap: 40px;
@@ -824,7 +877,7 @@
     gap: 20px;
   }
   .projects-heading-aside > p {
-    font-size: 11px;
+    font-size: 14px;
   }
   .projects-github-link {
     gap: 12px;
@@ -881,7 +934,7 @@
     grid-column: 2;
     justify-self: start;
     max-width: none;
-    font-size: 11px;
+    font-size: 14px;
     margin-top: 1px;
     line-height: 1.75;
   }
@@ -953,7 +1006,7 @@
     font-size: 11px;
   }
   .project-short-story p {
-    font-size: 11px;
+    font-size: 14px;
     margin-top: 9px;
     line-height: 1.8;
   }
@@ -972,7 +1025,7 @@
   }
   .project-open-button {
     align-self: flex-end;
-    font-size: 11px;
+    font-size: 13px;
     gap: 17px;
   }
   .project-open-button > span {
@@ -1004,6 +1057,7 @@
   }
   .project-dialog {
     width: calc(100vw - 20px);
+    max-width: none;
     max-height: 93dvh;
     border-radius: 12px;
   }
@@ -1015,7 +1069,7 @@
     padding-right: 22px;
   }
   .project-dialog-lead {
-    font-size: 12px;
+    font-size: 15px;
   }
   .project-dialog-close {
     top: 12px;
@@ -1031,28 +1085,35 @@
     padding: 0 23px 30px;
   }
   .project-facts {
-    padding: 24px 0;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px 0;
   }
   .project-facts > div {
-    padding: 0 10px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0;
+    border: 0;
   }
   .project-facts strong {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
   }
   .project-facts span {
-    font-size: 11px;
-    margin-top: 5px;
+    font-size: 12px;
+    margin-top: 0;
   }
   .project-dialog-overview {
+    grid-template-columns: minmax(0, 1fr);
     gap: 25px;
     padding: 28px 0;
   }
   .project-dialog-overview p {
-    font-size: 11px;
+    font-size: 15px;
   }
   .project-dialog-body h3 {
-    font-size: 12px;
+    font-size: 15px;
   }
   .project-decision {
     gap: 12px;
@@ -1060,10 +1121,10 @@
     padding: 15px 0;
   }
   .project-decision h4 {
-    font-size: 13px;
+    font-size: 16px;
   }
   .project-decision p {
-    font-size: 11px;
+    font-size: 14px;
     line-height: 1.85;
   }
   .project-dialog-stack .project-stack > span {

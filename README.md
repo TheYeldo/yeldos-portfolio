@@ -27,9 +27,10 @@ pnpm preview
 ## Features
 
 - A beveled 3D Y with titanium and obsidian materials, studio reflections, pointer response and a CSS fallback.
-- Scroll-linked storytelling and section reveals with a global motion control and system reduced-motion support.
+- Scroll-linked storytelling and section reveals with a global motion control, saved visitor preference and system reduced-motion support.
 - Three detailed project cases with live screenshots, category filters, native dialogs and repository links.
 - A sticky case index, direct project links and switchable room/editor screenshots for Programming Simulator.
+- Fullscreen screenshot inspection with original-size zoom, keyboard navigation and focus restoration, including from inside case dialogs.
 - A searchable portfolio index with Ctrl/⌘ K, keyboard navigation and support for projects hidden by filters.
 - About, YelGit and ProcessLens, interactive expertise tabs and a four-step working process.
 - A playground with editable easing and duration, a keyboard-accessible tilt card and a magnetic button.
@@ -46,6 +47,7 @@ pnpm preview
 - `src/components/BeyondBrowser.tsx` and `beyond-browser.css`: C++ projects.
 - `src/components/Playground.tsx` and `playground.css`: interactive motion experiments.
 - `src/components/CommandMenu.tsx` and `command-menu.css`: searchable navigation with native dialog semantics.
+- `src/components/ImageViewer.tsx` and `image-viewer.css`: fullscreen project screenshots and zoom.
 - `public/projects/`: real screenshots from the owner's projects.
 - `index.html`: search/social metadata and structured data.
 
@@ -55,11 +57,11 @@ Project descriptions are based on the owner's public repositories and existing p
 
 YeldoOS, Taytlo and Programming Simulator screenshots were captured from their public deployments. The ProcessLens screenshot comes from its public repository. All project links and source references are included on the site. The social preview is a screenshot of this portfolio.
 
-Manrope is loaded from Google Fonts with system-font fallback. The site has no analytics or trackers.
+Manrope variable WOFF2 fonts are served locally from `public/fonts/`, with preloaded Latin and Cyrillic subsets and system-font fallback. Original files come from Google Fonts; their SIL Open Font License is included in `public/fonts/OFL.txt`. No third-party font requests are made. The site has no analytics or trackers.
 
 ## Browser verification
 
-Check desktop and mobile layouts, material switching, pause/resume, project filters, dialog Escape and focus restoration, expertise and playground keyboard navigation, contact topics and email copying. Run lint, formatting and the production build before publishing.
+Check desktop and mobile layouts, material switching, saved pause/resume after reload, project filters, screenshot fit/zoom and image switching, nested-dialog Escape and focus restoration, expertise and playground keyboard navigation, contact topics and email copying. Run lint, formatting and the production build before publishing.
 
 ## Owner
 
